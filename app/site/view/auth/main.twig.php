@@ -41,21 +41,26 @@
                                     <div class="text-center">
                                         <h1 class="h4 text-gray-900 mb-4">Trainning POO MVC!</h1>
                                     </div>
+                                    {% if response.message.success == false and response.message.description != '' %}
+                                    <div class="alert alert-danger" role="alert">
+                                        {{response.message.description}}
+                                    </div>
+                                    {% endif %}
                                     <form class="user" action="{{BASE}}/auth/login" method="POST">
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
                                                 id="exampleInputEmail" name="email" aria-describedby="emailHelp"
-                                                placeholder="Digite seu email...">
+                                                placeholder="Digite seu email..." title="Informe um email válido" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" class="form-control form-control-user"
-                                                id="exampleInputPassword" name="senha" placeholder="Digite sua senha">
+                                            <input type="password" class="form-control form-control-user" title="Informe uma senha"
+                                                id="exampleInputPassword" name="senha" placeholder="Digite sua senha" required>
                                         </div>                                    
                                         <input type="submit" class="btn btn-primary btn-user btn-block" value="Entrar" />                                        
                                     </form>
                                     <hr>
                                     <div class="text-center">
-                                        <a class="small" href="{{BASE}}usuario/esqueci">Esqueceu a senha?</a>
+                                        <a class="small" href="{{BASE}}usuario/forgot">Esqueceu a senha?</a>
                                     </div>
                                     <div class="text-center">
                                         <a class="small" href="{{BASE}}usuario">Criar conta!</a>

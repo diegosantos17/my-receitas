@@ -13,6 +13,7 @@ class Usuario extends EntityBase{
     private $sobrenome;
     private $email;
     private $senha;
+    private $token;
 
     public function getNome(){
         return $this->nome;
@@ -44,5 +45,13 @@ class Usuario extends EntityBase{
 
     public function setSenha($senha){
         $this->senha = $this->encryption($senha, PRIVATE_KEY);
-    }    
+    } 
+    
+    public function getToken(){
+        return $this->token;
+    }
+
+    public function setToken($token){
+        $this->token = $this->encryption($token, PRIVATE_KEY);
+    }
 }

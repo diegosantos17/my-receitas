@@ -27,25 +27,26 @@ class UsuarioController extends Controller implements ControllerInterface
         $usuario = new Usuario();
         $message = [];
 
-        if ($_SERVER["REQUEST_METHOD"] =="POST") {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $usuario->setNome($_POST["nome"]);
             $usuario->setSobrenome($_POST["sobrenome"]);
             $usuario->setEmail($_POST["email"]);
             $usuario->setSenha($_POST["senha"]);
+            $usuario->setToken($_POST["email"]);
 
             $usuario = $this->usuarioModel->create($usuario);
             $message = [
                 "success" => $usuario ?? false,
                 "description" => "Usuário salvo com sucesso"
             ];
-        } 
+        }
 
         $this->load("usuario/create", [
             'response' =>
             [
                 "pageTitle" => "Criar conta",
                 "data" => $usuario,
-                "message"=> $message
+                "message" => $message
             ]
         ]);
     }
@@ -54,56 +55,76 @@ class UsuarioController extends Controller implements ControllerInterface
     {
         $filtros = [];
 
-        if(!empty($_POST["email"])){
+        if (!empty($_POST["email"])) {
             $filtros["email"] = $_POST["email"];
-        } 
-
-        if(!empty($_POST["senha"])){
-            $filtros["senha"] = $this->encryption($_POST["senha"], PRIVATE_KEY);
-        } 
+        }
 
         $usuarios = $this->usuarioModel->read($filtros);
 
-        $this->load("usuario/create", [
+        $this->load("usuario/read", [
             'response' =>
             [
-                "pageTitle" => "Criar conta",
-                "data" => $usuarios
+                "pageTitle" => "Gestão de Usuários: Listar",
+                "data" => [
+                    "usuarios" => $usuarios
+                ]
             ]
         ]);
     }
 
     public function update($id)
-    {        
+    {
         $usuario = new Usuario();
 
-        if ($_SERVER["REQUEST_METHOD"] =="POST") {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            $usuario->setNome($_POST["nome"]);
+            $usuario->setSobrenome($_POST["sobrenome"]);
+            $usuario->setEmail($_POST["email"]);
+            $usuario->setToken($_POST["email"]);
+            
+
+            $usuario = $this->usuarioModel->update($id, $usuario);
+        }
+
+        header("Location: " . BASE . "usuario");
+    }
+
+    public function create2()
+    {
+        $usuario = new Usuario();
+        $message = [];
+
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $usuario->setNome($_POST["nome"]);
             $usuario->setSobrenome($_POST["sobrenome"]);
             $usuario->setEmail($_POST["email"]);
             $usuario->setSenha($_POST["senha"]);
 
-            $usuario = $this->usuarioModel->update($id, $usuario);
+            $usuario = $this->usuarioModel->create($usuario);
+            header("Location: " . BASE . "usuario");
+        } else {
+            $this->load("usuario/create2", [
+                'response' =>
+                [
+                    "pageTitle" => "Novo usuário",
+                    "data" => $usuario,
+                    "message" => $message
+                ]
+            ]);
         }
-
-        $this->load("usuario/create", [
-            'response' =>
-            [
-                "pageTitle" => "Alterar conta",
-                "data" => $usuario
-            ]
-        ]);
     }
 
     public function view($id)
     {
         $usuario = $this->usuarioModel->view($id);
 
-        $this->load("usuario/main", [
+        $this->load("usuario/view", [
             'response' =>
             [
-                "pageTitle" => "Criar conta",
-                "data" => $usuario
+                "pageTitle" => "Usuários: editando " . $usuario->nome,
+                "data" => [
+                    "usuario" => $usuario
+                ]
             ]
         ]);
     }
@@ -112,19 +133,13 @@ class UsuarioController extends Controller implements ControllerInterface
     {
         $sucesso = $this->usuarioModel->delete($id);
 
-        $this->load("usuario/main", [
-            'response' =>
-            [
-                "pageTitle" => "Deletar conta",
-                "data" => $sucesso
-            ]
-        ]);
+        header("Location: " . BASE . "usuario");
     }
 
 
-    public function esqueci()
+    public function forgot()
     {
-        $this->load("usuario/esqueci", [
+        $this->load("usuario/forgot", [
             'response' =>
             [
                 "pageTitle" => "Esqueci a senha"
@@ -134,19 +149,62 @@ class UsuarioController extends Controller implements ControllerInterface
 
     public function recuperar()
     {
+        $filtros["email"] = $_POST["email"];
 
-        $emailEnviado = Email::enviarEmail();
-        Log::debug("Recuperando senha");
+        $usuarios = $this->usuarioModel->read($filtros);
 
-        $this->load("usuario/esqueci", [
-            'response' =>
-            [
-                "pageTitle" => "Esqueci a senha",
-                "message" => [
-                    "success" => $emailEnviado,
-                    "description" => $emailEnviado ? "Senha enviada para seu email." : 'Falha no envio'
+        if (count($usuarios) > 0) {
+
+            $emailEnviado = Email::enviarEmail(
+                $usuarios[0]->email, 
+                $usuarios[0]->nome . " " . $usuarios[0]->sobrenome, 
+                $usuarios[0]->token
+            );
+
+            Log::debug("Recuperando senha");
+
+            $this->load("usuario/forgot", [
+                'response' =>
+                [
+                    "pageTitle" => "Esqueci a senha",
+                    "message" => [
+                        "success" => $emailEnviado,
+                        "description" => $emailEnviado ? "Senha enviada para seu email." : 'Falha no envio'
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        }
+    }
+
+    public function resetPassword($token)
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "GET") {
+            $filtros["token"] = $token;
+
+            $usuarios = $this->usuarioModel->read($filtros);
+
+            if (count($usuarios) > 0) {
+                $this->load("usuario/resetPassword", [
+                    'response' =>
+                    [
+                        "pageTitle" => "Redefinir senha",
+                        "data" => [
+                            "usuario" => [
+                                "id" => $usuarios[0]->id,
+                                "token" => $usuarios[0]->token
+                            ]
+                        ]
+                    ]
+                ]);
+            }
+        } else {
+
+            $sucesso = $this->usuarioModel->resetPassword($_POST["id"], $_POST["senha"]);
+
+            if ($sucesso) {
+                Log::debug("Senha recuperada");
+                header("Location: " . BASE . "auth");
+            }
+        }
     }
 }

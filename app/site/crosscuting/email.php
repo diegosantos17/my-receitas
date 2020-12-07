@@ -15,7 +15,7 @@ use PHPMailer\PHPMailer\Exception;
 
 class Email {
 
-    static function enviarEmail()
+    static function enviarEmail($email, $nome, $token = "")
     {
         try
         {
@@ -25,22 +25,22 @@ class Email {
             // Configurações do servidor
             $mail->isSMTP();        //Devine o uso de SMTP no envio
             $mail->SMTPAuth = true; //Habilita a autenticação SMTP
-            $mail->Username   = 'diegosr.trainning@gmail.com';
-            $mail->Password   = 'SENHA';
+            $mail->Username   = EMAIL_USERNAME;
+            $mail->Password   = EMAIL_SENHA;
             // Criptografia do envio SSL também é aceito
             $mail->SMTPSecure = 'tls';
             // Informações específicadas pelo Google
-            $mail->Host = 'smtp.gmail.com';
+            $mail->Host = EMAIL_SMTP;
             $mail->Port = 587;
             // Define o remetente
-            $mail->setFrom('diegosantos17@gmail.com', 'Diego Trainning');
+            $mail->setFrom(EMAIL_FROM, EMAIL_FROM_NAME);
             // Define o destinatário
-            $mail->addAddress('diegosantos17@gmail.com', 'Diego Rodrigues');
+            $mail->addAddress($email, $nome);
 
             // Conteúdo da mensagem
             $mail->isHTML(true);  // Seta o formato do e-mail para aceitar conteúdo HTML
             $mail->Subject = 'Recuperação de senha';
-            $mail->Body    = 'Este é o corpo da mensagem <b>Olá em negrito!</b>';
+            $mail->Body    = '<p>Olá <b>$nome!</b></p><p><a href="' . HOST . BASE . 'usuario/resetPassword/' . $token . '">Clique aqui</a> para redefinir sua senha.</p>';
             $mail->AltBody = 'Este é o cortpo da mensagem para clientes de e-mail que não reconhecem HTML';
 
             // Enviar

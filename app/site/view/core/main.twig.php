@@ -10,7 +10,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>SB Admin 2 - Blank</title>
+    <title>{% block title %} {% endblock %}</title>
 
     <!-- Custom fonts for this template-->
     <link href="{{BASE}}vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -20,6 +20,8 @@
 
     <!-- Custom styles for this template-->
     <link href="{{BASE}}css/sb-admin-2.min.css" rel="stylesheet">
+
+    {% block head %}{% endblock %}
 
 </head>
 
@@ -47,6 +49,8 @@
 
                     <!-- Page Heading -->
                     <h1 class="h3 mb-4 text-gray-800">{{ response.pageTitle }}</h1>
+
+                    {% block body %}{% endblock %}
 
                 </div>
                 <!-- /.container-fluid -->
@@ -98,6 +102,8 @@
 
     <!-- Custom scripts for all pages-->
     <script src="{{BASE}}js/sb-admin-2.min.js"></script>
+
+    {% block scripts %}{% endblock %}
 
 </body>
 

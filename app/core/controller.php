@@ -10,7 +10,8 @@ class Controller
             (
                 $view != "auth/main" 
                 && $view != "usuario/create" 
-                && $view != "usuario/esqueci"
+                && $view != "usuario/forgot"
+                && $view != "usuario/resetPassword"
             ) 
             && !isset($_SESSION["Usuario"])){
             header("Location: " . BASE . "auth");

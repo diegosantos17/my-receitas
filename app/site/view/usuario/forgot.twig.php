@@ -51,7 +51,7 @@
                                     <form class="user" method="POST" action="{{BASE}}usuario/recuperar">
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user"
-                                                id="exampleInputEmail" aria-describedby="emailHelp"
+                                                id="email" name="email" aria-describedby="emailHelp"
                                                 placeholder="Digite seu email...">
                                         </div>
                                         <input type="submit" class="btn btn-primary btn-user btn-block" value="Recuperar senha">                                                                            
