@@ -9,7 +9,7 @@ class Controller
         if(
             (
                 $view != "auth/main" 
-                && $view != "usuario/main" 
+                && $view != "usuario/create" 
                 && $view != "usuario/esqueci"
             ) 
             && !isset($_SESSION["Usuario"])){

@@ -2,10 +2,19 @@
 
 namespace app\site\controller;
 use app\core\Controller;
+use app\site\model\UsuarioModel;
+use app\site\entities\Usuario;
 
 class AuthController extends Controller
 {
-    public function index()
+    private $usuarioModel;
+
+    public function __construct()
+    {
+        $this->usuarioModel = new UsuarioModel();
+    }
+
+    public function read()
     {
         $this->load("auth/main", [
             'response' =>
@@ -45,9 +54,26 @@ class AuthController extends Controller
             ]
         ];
 
-        $_SESSION["Usuario"] = [
-            "nome" => "Diego Rodrigues"
-        ];
+        $filtros = [];
+
+        if(!empty($_POST["email"])){
+            $filtros["email"] = $_POST["email"];
+        } 
+
+        if(!empty($_POST["senha"])){
+            $filtros["senha"] = $_POST["senha"];
+        } 
+
+        $usuarios = $this->usuarioModel->read($filtros);
+
+        if(count($usuarios) > 0){
+            $usuario = $usuarios[0];
+
+            $_SESSION["Usuario"] = [
+                "nome" => $usuario->nome,
+                "sobrenome" => $usuario->sobrenome,
+            ];
+        }       
 
         header('Location: ' . BASE);        
     }

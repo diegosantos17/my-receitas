@@ -7,7 +7,7 @@ use app\core\Controller;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function read()
     {
         $this->load("home/main", [
             'response' =>

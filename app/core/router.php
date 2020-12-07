@@ -31,7 +31,7 @@ class Router
     private function execute()
     {
         $class  = "HomeController";
-        $method = "index";
+        $method = "read";
 
         if (isset($this->uriEx[0])) {
             $c = "app\\site\\controller\\" . ucfirst($this->uriEx[0]) . "Controller";

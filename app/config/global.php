@@ -9,3 +9,5 @@ define("DB_NAME", "myreceitas");
 
 define("LOGINFOFLAG", true);
 define("LOGDEBUGFLAG", true);
+
+define("PRIVATE_KEY", "trainingPooSecret");
