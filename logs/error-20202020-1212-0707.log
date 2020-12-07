@@ -1,3 +1,4 @@
 [2020-12-07T06:37:38.907810+01:00] main.ERROR: Message could not be sent. Mailer Error: SMTP Error: Could not authenticate. [] []
 [2020-12-07T08:34:15.197532+01:00] main.ERROR: Error on getConnection():SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES) [] []
 [2020-12-07T08:44:23.945599+01:00] main.ERROR: Error on getConnection():SQLSTATE[HY000] [1045] Access denied for user 'root'@'localhost' (using password: YES) [] []
+[2020-12-07T20:06:47.720013+01:00] main.ERROR: Message could not be sent. Mailer Error: SMTP Error: Could not authenticate. [] []

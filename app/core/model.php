@@ -4,7 +4,7 @@ namespace app\core;
 use PDO;
 use PDOException;
 
-use app\site\crosscuting\Log;
+use app\crosscuting\Log;
 
 /**
  * PDO PHP Persistence Class

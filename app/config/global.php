@@ -18,5 +18,8 @@ define("EMAIL_SENHA", "SENHA");
 define("EMAIL_FROM", "diegosantos17@gmail.com");
 define("EMAIL_FROM_NAME", "Diego Rodrigues");
 define("EMAIL_USERNAME", "diegosr.trainning@gmail.com");
+define("EMAIL_PORT", 587);
 
+define("UPLOAD_IMAGE_USUARIO", BASE . "img/usuario/");
+define("PATH_IMAGEM_USUARIO", "../public/img/usuario");
 

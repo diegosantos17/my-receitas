@@ -3,7 +3,7 @@
 namespace app\site\entities;
 
 use app\infrastructure\contracts\entities\EntityBase;
-use app\site\crosscuting\EncryptionTrait;
+use app\crosscuting\EncryptionTrait;
 
 class Usuario extends EntityBase{
 
@@ -14,6 +14,7 @@ class Usuario extends EntityBase{
     private $email;
     private $senha;
     private $token;
+    private $foto;
 
     public function getNome(){
         return $this->nome;
@@ -37,6 +38,14 @@ class Usuario extends EntityBase{
 
     public function setEmail($email){
         $this->email = $email;
+    }
+
+    public function getFoto(){
+        return $this->foto;
+    }
+
+    public function setFoto($foto){
+        $this->foto = $foto;
     }
 
     public function getSenha(){

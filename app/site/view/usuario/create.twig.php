@@ -61,6 +61,7 @@
                                         <input type="password" class="form-control form-control-user" id="confirmarSenhar" name="confirmarSenhar" placeholder="Confirmar senha">
                                     </div>
                                 </div>
+                                
                                 <input type="submit" class="btn btn-primary btn-user btn-block" value="Registrar conta" />
                             </form>
                             <hr>

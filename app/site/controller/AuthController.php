@@ -123,6 +123,7 @@ class AuthController extends Controller
             $_SESSION["Usuario"] = [
                 "nome" => $usuario->nome,
                 "sobrenome" => $usuario->sobrenome,
+                "foto" => $usuario->foto ?? BASE . "img/undraw_profile.svg"
             ];
 
             header('Location: ' . BASE);

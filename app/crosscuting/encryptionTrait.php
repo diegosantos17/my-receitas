@@ -1,6 +1,6 @@
 <?php
 
-namespace app\site\crosscuting;
+namespace app\crosscuting;
 
 trait EncryptionTrait{
 

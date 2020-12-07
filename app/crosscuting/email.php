@@ -1,6 +1,6 @@
 <?php
 
-namespace app\site\crosscuting;
+namespace app\crosscuting;
 
 // Carregar o autoloader do composer
 require "../../vendor/autoload.php";
@@ -8,10 +8,6 @@ require "../../vendor/autoload.php";
 // Importar as classes 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
-
-// require "../../vendor/phpmailer/phpmailer/src/Exception.php";
-// require "../../vendor/phpmailer/phpmailer/src/PHPMailer.php";
-// require "../../vendor/phpmailer/phpmailer/src/SMTP.php";
 
 class Email {
 
@@ -31,7 +27,7 @@ class Email {
             $mail->SMTPSecure = 'tls';
             // Informações específicadas pelo Google
             $mail->Host = EMAIL_SMTP;
-            $mail->Port = 587;
+            $mail->Port = EMAIL_PORT;
             // Define o remetente
             $mail->setFrom(EMAIL_FROM, EMAIL_FROM_NAME);
             // Define o destinatário

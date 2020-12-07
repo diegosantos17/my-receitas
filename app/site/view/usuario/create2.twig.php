@@ -8,7 +8,7 @@
 
 
 {% block body %}
-<form method="POST" action="{{BASE}}usuario/create2">
+<form method="POST" action="{{BASE}}usuario/create2" enctype="multipart/form-data">
     <div class="form-group row">
         <label for="nome" class="col-sm-2 col-form-label">Nome</label>
         <div class="col-sm-10">
@@ -41,6 +41,13 @@
         <label for="confirmarsenha" class="col-sm-2 col-form-label">Confirmar Senha</label>
         <div class="col-sm-10">
             <input type="password" class="form-control" id="confirmarsenha" name="confirmarsenha" value="" required>
+        </div>
+    </div>
+
+    <div class="form-group row">
+        <label for="fotoPerfil" class="col-sm-2 col-form-label">Foto de Perfil</label>
+        <div class="col-sm-10">
+            <input type="file" name="fotoPerfil" id="fotoPerfil">
         </div>
     </div>
 

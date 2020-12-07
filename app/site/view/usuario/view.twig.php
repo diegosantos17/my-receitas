@@ -8,7 +8,7 @@
 
 
 {% block body %}
-<form method="POST" action="{{BASE}}usuario/update/{{response.data.usuario.id}}">
+<form method="POST" action="{{BASE}}usuario/update/{{response.data.usuario.id}}"  enctype="multipart/form-data">
     <div class="form-group row">
         <label for="nome" class="col-sm-2 col-form-label">Nome</label>
         <div class="col-sm-10">
@@ -30,6 +30,13 @@
         </div>
     </div>
     
+    <div class="form-group row">
+        <label for="fotoPerfil" class="col-sm-2 col-form-label">Foto de Perfil</label>
+        <div class="col-sm-10">
+            <input type="file" name="fotoPerfil" id="fotoPerfil">
+        </div>
+    </div>
+
     <div class="form-group row justify-content-end">
         <div class="col-2">
             <a href="{{BASE}}usuario" class="btn btn-info">Voltar</a>

@@ -3,13 +3,13 @@
 namespace app\site\controller;
 
 use app\core\Controller;
-use app\site\crosscuting\Email;
-use app\site\crosscuting\Log;
+use app\crosscuting\Email;
+use app\crosscuting\Log;
 use app\infrastructure\contracts\controllers\ControllerInterface;
-use app\site\crosscuting\EncryptionTrait;
+use app\crosscuting\EncryptionTrait;
+use app\crosscuting\UploadFiles;
 use app\site\entities\Usuario;
 use app\site\model\UsuarioModel;
-use stdClass;
 
 class UsuarioController extends Controller implements ControllerInterface
 {
@@ -81,7 +81,10 @@ class UsuarioController extends Controller implements ControllerInterface
             $usuario->setSobrenome($_POST["sobrenome"]);
             $usuario->setEmail($_POST["email"]);
             $usuario->setToken($_POST["email"]);
-            
+
+            $fotoPerfil = UploadFiles::uploadImage(PATH_IMAGEM_USUARIO, 'fotoPerfil');
+
+            $usuario->setFoto(UPLOAD_IMAGE_USUARIO . $fotoPerfil);
 
             $usuario = $this->usuarioModel->update($id, $usuario);
         }
@@ -94,11 +97,17 @@ class UsuarioController extends Controller implements ControllerInterface
         $usuario = new Usuario();
         $message = [];
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {            
+
             $usuario->setNome($_POST["nome"]);
             $usuario->setSobrenome($_POST["sobrenome"]);
             $usuario->setEmail($_POST["email"]);
+            $usuario->setToken($_POST["email"]);
             $usuario->setSenha($_POST["senha"]);
+
+            $fotoPerfil = UploadFiles::uploadImage(PATH_IMAGEM_USUARIO, 'fotoPerfil');
+
+            $usuario->setFoto(UPLOAD_IMAGE_USUARIO . $fotoPerfil);
 
             $usuario = $this->usuarioModel->create($usuario);
             header("Location: " . BASE . "usuario");

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\site\crosscuting;
+namespace app\crosscuting;
 
 // Carregar o autoloader do composer
 require "../../vendor/autoload.php";

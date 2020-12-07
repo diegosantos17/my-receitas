@@ -4,8 +4,7 @@ namespace app\site\model;
 
 use app\core\Model;
 use app\infrastructure\contracts\models\ModelInterface;
-use app\site\crosscuting\EncryptionTrait;
-use app\site\entities\Usuario;
+use app\crosscuting\EncryptionTrait;
 
 class UsuarioModel implements ModelInterface
 {
@@ -20,13 +19,14 @@ class UsuarioModel implements ModelInterface
 
     public function create($usuario)
     {
-        $sql  = 'INSERT INTO usuario (nome, sobrenome, email, senha, token) VALUES (:nome, :sobrenome, :email, :senha, :token)';
+        $sql  = 'INSERT INTO usuario (nome, sobrenome, email, senha, token, foto) VALUES (:nome, :sobrenome, :email, :senha, :token, :foto)';
         $params = [
             ':nome' => $usuario->getNome(),
             ':sobrenome' => $usuario->getSobrenome(),
             ':email' => $usuario->getEmail(),
             ':senha' => $usuario->getSenha(),
-            ':token' => $usuario->getToken()
+            ':token' => $usuario->getToken(),
+            ':foto' => $usuario->getFoto(),
         ];
 
         if (!$this->pdo->executeNonQuery($sql, $params))
@@ -65,13 +65,14 @@ class UsuarioModel implements ModelInterface
 
     public function update($id, $usuario):bool
     {   
-        $sql  = 'UPDATE usuario SET nome = :nome, sobrenome = :sobrenome, email = :email, token = :token WHERE id = :id';
+        $sql  = 'UPDATE usuario SET nome = :nome, sobrenome = :sobrenome, email = :email, token = :token, foto = :foto  WHERE id = :id';
         $params = [
             ':id' => $id,
             ':nome' => $usuario->getNome(),
             ':sobrenome' => $usuario->getSobrenome(),
             ':email' => $usuario->getEmail(),
-            ':token' => $usuario->getToken()
+            ':token' => $usuario->getToken(),
+            ':foto' => $usuario->getFoto()
         ];
 
         return $this->pdo->executeNonQuery($sql, $params);
@@ -111,7 +112,8 @@ class UsuarioModel implements ModelInterface
             'nome' => $arr['nome'] ?? null,
             'sobrenome'   => $arr['sobrenome'] ?? null,
             'email'   => $arr['email'] ?? null,
-            'token'   => $arr['token'] ?? null
+            'token'   => $arr['token'] ?? null,
+            'foto'   => $arr['foto'] ?? null
         ];
     }
 }

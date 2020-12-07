@@ -63,7 +63,7 @@
                                         <a class="small" href="{{BASE}}usuario/forgot">Esqueceu a senha?</a>
                                     </div>
                                     <div class="text-center">
-                                        <a class="small" href="{{BASE}}usuario">Criar conta!</a>
+                                        <a class="small" href="{{BASE}}usuario/create">Criar conta!</a>
                                     </div>
                                 </div>
                             </div>
