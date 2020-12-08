@@ -23,10 +23,10 @@ abstract class EntityBase {
     }
 
     public function getUpdatedAt(){
-        return $this->createdAt;
+        return $this->updatedAt;
     }
 
-    public function setUpdatedAt($createdAt){
-        $this->createdAt = $createdAt;
+    public function setUpdatedAt($updatedAt){
+        $this->updateAt = $updatedAt;
     }
 }

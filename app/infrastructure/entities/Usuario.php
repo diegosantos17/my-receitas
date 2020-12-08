@@ -1,6 +1,6 @@
 <?php
 
-namespace app\site\entities;
+namespace app\infrastructure\entities;
 
 use app\infrastructure\contracts\entities\EntityBase;
 use app\crosscuting\EncryptionTrait;
@@ -53,7 +53,7 @@ class Usuario extends EntityBase{
     }
 
     public function setSenha($senha){
-        $this->senha = $this->encryption($senha, PRIVATE_KEY);
+        $this->senha = $senha;
     } 
     
     public function getToken(){

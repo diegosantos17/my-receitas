@@ -8,25 +8,26 @@
 
 
 {% block body %}
+{% include 'comum/alert.twig.php' %}
 <form method="POST" action="{{BASE}}usuario/create2" enctype="multipart/form-data">
     <div class="form-group row">
         <label for="nome" class="col-sm-2 col-form-label">Nome</label>
         <div class="col-sm-10">
-            <input type="text" class="form-control" id="nome" name="nome" value="" required>
+            <input type="text" class="form-control" id="nome" name="nome" value="{{ response.data.usuario.nome }}" required>
         </div>
     </div>
     
     <div class="form-group row">
         <label for="sobrenome" class="col-sm-2 col-form-label">Sobrenome</label>
         <div class="col-sm-10">
-        <input type="text" class="form-control" id="nome" name="sobrenome" value="" required>
+        <input type="text" class="form-control" id="nome" name="sobrenome" value="{{ response.data.usuario.sobrenome }}" required>
         </div>
     </div>
     
     <div class="form-group row">
         <label for="email" class="col-sm-2 col-form-label">Email</label>
         <div class="col-sm-10">
-            <input type="email" class="form-control" id="email" name="email" value="" required>
+            <input type="email" class="form-control" id="email" name="email" value="{{ response.data.usuario.email }}" required>
         </div>
     </div>
     

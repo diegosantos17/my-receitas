@@ -4,7 +4,7 @@ namespace app\site\controller;
 
 use app\core\Controller;
 use app\site\model\UsuarioModel;
-use app\site\entities\Usuario;
+use app\infrastructure\entities\Usuario;
 
 class AuthController extends Controller
 {
@@ -121,9 +121,9 @@ class AuthController extends Controller
             $_SESSION["SidebarMenu"] = $sidebarMenu;
 
             $_SESSION["Usuario"] = [
-                "nome" => $usuario->nome,
-                "sobrenome" => $usuario->sobrenome,
-                "foto" => $usuario->foto ?? BASE . "img/undraw_profile.svg"
+                "nome" => $usuario->getNome(),
+                "sobrenome" => $usuario->getSobrenome(),
+                "foto" => $usuario->getFoto() ?? BASE . "img/undraw_profile.svg"
             ];
 
             header('Location: ' . BASE);

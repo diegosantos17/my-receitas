@@ -16,7 +16,7 @@ class Log
             $logger = new Logger('main');
             $logger->pushHandler(new StreamHandler("../logs/" . "debug-" . date("Y-m-d") . ".log", Logger::DEBUG));
 
-            $logger->info($texto);
+            $logger->debug($texto);
         }
     }
 
@@ -30,11 +30,11 @@ class Log
         }
     }
 
-    static function error($texto)
+    static function error($error)
     {
         $logger = new Logger('main');
         $logger->pushHandler(new StreamHandler("../logs/" . "error-" . date("yyyy-mm-dd") . ".log", Logger::ERROR));
 
-        $logger->error($texto);
+        $logger->error($error);
     }
 }

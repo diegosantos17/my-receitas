@@ -8,6 +8,7 @@
 
 
 {% block body %}
+{% include 'comum/alert.twig.php' %}
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
     <div class="card-body">

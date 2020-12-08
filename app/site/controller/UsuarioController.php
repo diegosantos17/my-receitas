@@ -8,8 +8,9 @@ use app\crosscuting\Log;
 use app\infrastructure\contracts\controllers\ControllerInterface;
 use app\crosscuting\EncryptionTrait;
 use app\crosscuting\UploadFiles;
-use app\site\entities\Usuario;
+use app\infrastructure\entities\Usuario;
 use app\site\model\UsuarioModel;
+use Exception;
 
 class UsuarioController extends Controller implements ControllerInterface
 {
@@ -24,109 +25,192 @@ class UsuarioController extends Controller implements ControllerInterface
 
     public function create()
     {
-        // ETAPA 1: Receber informação (CONTROLLER)
-        $usuario = new Usuario();
-        $message = [];
+        try {
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // ETAPA 1: Receber informação (CONTROLLER)
+            $usuario = new Usuario();
+            $message = [];
+    
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    
+                Log::debug("> Criando usuario " . $_POST["nome"] . " " . $_POST["nome"]);
+    
+                $usuario->setNome($_POST["nome"]);
+                $usuario->setSobrenome($_POST["sobrenome"]);
+                $usuario->setEmail($_POST["email"]);
+                $usuario->setSenha($_POST["senha"]);
+                $usuario->setToken($_POST["email"]);
+    
+                // ETAPA 2: Delegar gravação no banco para MODEL
+                $usuario = $this->usuarioModel->create($usuario);
+                $message = [
+                    "success" => true,
+                    "description" => "Usuário salvo com sucesso"
+                ];
 
-            Log::debug("> Criando usuario " . $_POST["nome"] . " " . $_POST["nome"]);
+                Log::debug("< Criando usuario (SUCESSO) " . $_POST["nome"] . " " . $_POST["email"] . " SUCESSO");
+            }
+    
+            // ETAPA 3: Delegar reenderização do HTML para VIEW
+            $this->load("usuario/create", [
+                'response' =>
+                [
+                    "pageTitle" => "Criar conta",
+                    "data" => [ 
+                        "usuario" => $usuario
+                    ],
+                    "message" => $message
+                ]
+            ]);
+        } catch (Exception $ex){
+            Log::error("< Criando usuario (FALHA) " . $_POST["nome"] . " " . $_POST["email"] . " - ERRO: " . $ex->getMessage());
 
-            $usuario->setNome($_POST["nome"]);
-            $usuario->setSobrenome($_POST["sobrenome"]);
-            $usuario->setEmail($_POST["email"]);
-            $usuario->setSenha($_POST["senha"]);
-            $usuario->setToken($_POST["email"]);
-
-            // ETAPA 2: Delegar gravação no banco para MODEL
-            $usuario = $this->usuarioModel->create($usuario);
-
-            $message = [
-                "success" => $usuario ?? false,
-                "description" => "Usuário salvo com sucesso"
-            ];
-
-            Log::debug("< Criando usuario " . $_POST["nome"] . " " . $_POST["email"] . " SUCESSO");
+            $this->load("usuario/create", [
+                'response' =>
+                [
+                    "pageTitle" => "Criar conta",
+                    "data" => [ 
+                        "usuario" => $usuario
+                    ],
+                    "message" => [
+                        "success" => false,
+                        "description" => $ex->getMessage()
+                    ]
+                ]
+            ]);
         }
-
-        // ETAPA 3: Delegar reenderização do HTML para VIEW
-        $this->load("usuario/create", [
-            'response' =>
-            [
-                "pageTitle" => "Criar conta",
-                "data" => $usuario,
-                "message" => $message
-            ]
-        ]);
     }
 
     public function read()
     {
-        $filtros = [];
+        try{
+            $filtros = [];
 
-        if (!empty($_POST["email"])) {
-            $filtros["email"] = $_POST["email"];
-        }
-
-        $usuarios = $this->usuarioModel->read($filtros);
-
-        $this->load("usuario/read", [
-            'response' =>
-            [
-                "pageTitle" => "Gestão de Usuários: Listar",
-                "data" => [
-                    "usuarios" => $usuarios
+            if (!empty($_POST["email"])) {
+                $filtros["email"] = $_POST["email"];
+            }
+    
+            $usuarios = $this->usuarioModel->read($filtros);
+    
+            $this->load("usuario/read", [
+                'response' =>
+                [
+                    "pageTitle" => "Gestão de Usuários: Listar",
+                    "data" => [
+                        "usuarios" => $usuarios
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        } catch(Exception $ex){
+            Log::error("Listando usuarios (FALHA) ERRO: " . $ex->getMessage());
+
+            $this->load("usuario/read", [
+                'response' =>
+                [
+                    "pageTitle" => "Gestão de Usuários: Listar",
+                    "data" => [],
+                    "message" => [
+                        "success" => false,
+                        "description" => $ex->getMessage()
+                    ]
+                ]            
+            ]);
+        }        
     }
 
     public function update($id)
     {
-        $usuario = new Usuario();
+        try{
+            $usuario = new Usuario();
+    
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {
+                $usuario->setNome($_POST["nome"]);
+                $usuario->setSobrenome($_POST["sobrenome"]);
+                $usuario->setEmail($_POST["email"]);
+                $usuario->setToken($_POST["email"]);
+    
+                $fotoPerfil = UploadFiles::uploadImage(PATH_IMAGEM_USUARIO, 'fotoPerfil');
+    
+                $usuario->setFoto(UPLOAD_IMAGE_USUARIO . $fotoPerfil);
+    
+                $usuario = $this->usuarioModel->update($id, $usuario);
+                header("Location: " . BASE . "usuario");
+            }
+        }catch (Exception $ex){
+            Log::error("< Criando usuario (FALHA) " . $_POST["nome"] . " " . $_POST["email"] . "ERRO: " . $ex->getMessage());
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            $usuario->setNome($_POST["nome"]);
-            $usuario->setSobrenome($_POST["sobrenome"]);
-            $usuario->setEmail($_POST["email"]);
-            $usuario->setToken($_POST["email"]);
-
-            $fotoPerfil = UploadFiles::uploadImage(PATH_IMAGEM_USUARIO, 'fotoPerfil');
-
-            $usuario->setFoto(UPLOAD_IMAGE_USUARIO . $fotoPerfil);
-
-            $usuario = $this->usuarioModel->update($id, $usuario);
+            $this->load("usuario/update", [
+                'response' =>
+                [
+                    "pageTitle" => "Alterar conta",
+                    "data" => [ 
+                        "usuario" => $usuario
+                    ],
+                    "message" => [
+                        "success" => false,
+                        "description" => $ex->getMessage()
+                    ]
+                ]
+            ]);
         }
-
-        header("Location: " . BASE . "usuario");
     }
 
     public function create2()
     {
-        $usuario = new Usuario();
-        $message = [];
+        try{ 
+            $usuario = new Usuario();
+            $message = [];
 
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {            
+            if ($_SERVER["REQUEST_METHOD"] == "POST") {            
 
-            $usuario->setNome($_POST["nome"]);
-            $usuario->setSobrenome($_POST["sobrenome"]);
-            $usuario->setEmail($_POST["email"]);
-            $usuario->setToken($_POST["email"]);
-            $usuario->setSenha($_POST["senha"]);
+                $usuario->setNome($_POST["nome"]);
+                $usuario->setSobrenome($_POST["sobrenome"]);
+                $usuario->setEmail($_POST["email"]);
+                $usuario->setToken($_POST["email"]);
+                $usuario->setSenha($_POST["senha"]);
 
-            $fotoPerfil = UploadFiles::uploadImage(PATH_IMAGEM_USUARIO, 'fotoPerfil');
+                
+                $fotoPerfil = UploadFiles::uploadImage(PATH_IMAGEM_USUARIO, 'fotoPerfil');
 
-            $usuario->setFoto(UPLOAD_IMAGE_USUARIO . $fotoPerfil);
+                $usuario->setFoto(UPLOAD_IMAGE_USUARIO . $fotoPerfil);
 
-            $usuario = $this->usuarioModel->create($usuario);
-            header("Location: " . BASE . "usuario");
-        } else {
+                $usuario = $this->usuarioModel->create($usuario);                
+
+                $this->load("usuario/create2", [
+                    'response' =>
+                    [
+                        "pageTitle" => "Gestão de Usuários: Listar",
+                        "message" => [
+                            "success" => true,
+                            "description" => "Usuário criado com sucesso"
+                        ]
+                    ]
+                ]);
+
+            } else {
+                $this->load("usuario/create2", [
+                    'response' =>
+                    [
+                        "pageTitle" => "Novo usuário",
+                        "data" => $usuario,
+                        "message" => $message
+                    ]
+                ]);
+            }
+        }catch(Exception $ex){
+            Log::error("< Criando usuario (FALHA) " . $_POST["nome"] . " " . $_POST["email"] . " - ERRO: " . $ex->getMessage());
+
             $this->load("usuario/create2", [
                 'response' =>
                 [
-                    "pageTitle" => "Novo usuário",
-                    "data" => $usuario,
-                    "message" => $message
+                    "pageTitle" => "Criar conta",
+                    "data" => [ 
+                        "usuario" => $usuario
+                    ],
+                    "message" => [
+                        "success" => false,
+                        "description" => $ex->getMessage()
+                    ]
                 ]
             ]);
         }
@@ -134,22 +218,40 @@ class UsuarioController extends Controller implements ControllerInterface
 
     public function view($id)
     {
-        $usuario = $this->usuarioModel->view($id);
-
-        $this->load("usuario/view", [
-            'response' =>
-            [
-                "pageTitle" => "Usuários: editando " . $usuario->nome,
-                "data" => [
-                    "usuario" => $usuario
+        try{
+            $usuario = $this->usuarioModel->view($id);
+    
+            $this->load("usuario/view", [
+                'response' =>
+                [
+                    "pageTitle" => "Usuários: editando " . $usuario->getNome(),
+                    "data" => [
+                        "usuario" => $usuario
+                    ]
                 ]
-            ]
-        ]);
+            ]);
+        } catch(Exception $ex){
+            Log::error("< Criando usuario (FALHA) " . $_POST["nome"] . " " . $_POST["email"] . " - ERRO: " . $ex->getMessage());
+
+            $this->load("usuario/view", [
+                'response' =>
+                [
+                    "pageTitle" => "Usuários: editando " . $usuario->getNome(),
+                    "data" => [ 
+                        "usuario" => $usuario
+                    ],
+                    "message" => [
+                        "success" => false,
+                        "description" => $ex->getMessage()
+                    ]
+                ]            
+            ]);
+        }
     }
 
     public function delete($id)
     {
-        $sucesso = $this->usuarioModel->delete($id);
+        $this->usuarioModel->delete($id);
 
         header("Location: " . BASE . "usuario");
     }
@@ -174,9 +276,9 @@ class UsuarioController extends Controller implements ControllerInterface
         if (count($usuarios) > 0) {
 
             $emailEnviado = Email::enviarEmail(
-                $usuarios[0]->email, 
-                $usuarios[0]->nome . " " . $usuarios[0]->sobrenome, 
-                $usuarios[0]->token
+                $usuarios[0]->getEmail(), 
+                $usuarios[0]->getNome() . " " . $usuarios[0]->getSobrenome(), 
+                $usuarios[0]->getToken()
             );
 
             Log::debug("Recuperando senha");
@@ -209,7 +311,7 @@ class UsuarioController extends Controller implements ControllerInterface
                         "data" => [
                             "usuario" => [
                                 "id" => $usuarios[0]->id,
-                                "token" => $usuarios[0]->token
+                                "token" => $usuarios[0]->getToken()
                             ]
                         ]
                     ]

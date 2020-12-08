@@ -1,10 +1,11 @@
 <?php
-namespace app\core;
+namespace app\infrastructure\repositories;
 
 use PDO;
 use PDOException;
 
 use app\crosscuting\Log;
+use app\infrastructure\contracts\repositories\RepositoryInterface;
 
 /**
  * PDO PHP Persistence Class
@@ -13,7 +14,7 @@ use app\crosscuting\Log;
  *
  * @author Victor Tassinari - victortassinarix@gmail.com
  */
-class Model {
+abstract class RepositoryBase {
 
     private static $connection;
     private $debug;

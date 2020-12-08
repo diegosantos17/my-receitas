@@ -34,24 +34,20 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Crie uma conta!</h1>
 
-                                {% if response.message.success == true %}
-                                <div class="alert alert-success" role="alert">
-                                    {{response.message.description}}
-                                </div>
-                                {% endif %}
+                                {% include 'comum/alert.twig.php' %}
 
                             </div>
                             <form class="user" method="POST" action="{{BASE}}/usuario/create">
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="nome" name="nome" placeholder="Nome">
+                                        <input type="text" class="form-control form-control-user" id="nome" name="nome" placeholder="Nome" value="{{ response.data.usuario.nome }}">
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="sobrenome" name="sobrenome" placeholder="Sobrenome">
+                                        <input type="text" class="form-control form-control-user" id="sobrenome" name="sobrenome" placeholder="Sobrenome" value="{{ response.data.usuario.sobrenome }}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email">
+                                    <input type="email" class="form-control form-control-user" id="email" name="email" placeholder="Email" value="{{ response.data.usuario.email }}">
                                 </div>
                                 <div class="form-group row">
                                     <div class="col-sm-6 mb-3 mb-sm-0">

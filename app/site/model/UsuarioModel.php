@@ -5,115 +5,86 @@ namespace app\site\model;
 use app\core\Model;
 use app\crosscuting\EncryptionTrait;
 use app\infrastructure\contracts\models\ModelInterface;
+use app\infrastructure\repositories\UsuarioRepository;
+use Exception;
 
 class UsuarioModel implements ModelInterface
 {
     use EncryptionTrait;
 
-    private $pdo;
+    private $usuarioRepository;
 
     public function __construct()
     {
-        $this->pdo = new Model();
+        $this->usuarioRepository = new UsuarioRepository();
     }
 
     public function create($usuario)
     {
-        $sql  = 'INSERT INTO usuario (nome, sobrenome, email, senha, token, foto) VALUES (:nome, :sobrenome, :email, :senha, :token, :foto)';
-        $params = [
-            ':nome' => $usuario->getNome(),
-            ':sobrenome' => $usuario->getSobrenome(),
-            ':email' => $usuario->getEmail(),
-            ':senha' => $usuario->getSenha(),
-            ':token' => $usuario->getToken(),
-            ':foto' => $usuario->getFoto(),
-        ];
+        try{
+            $this->isValid($usuario);
+            $isExists = $this->usuarioExiste($usuario);
+            
+            if($isExists){
+                throw new Exception("Email já cadastrado.");
+            }
 
-        if (!$this->pdo->executeNonQuery($sql, $params))
-            return -1; //Erro
-
-        $id = $this->pdo->getLastID();
-        $usuario = $this->view($id);
-        return $usuario;
+            $usuario->setSenha($this->encryption($usuario->getSenha(), PRIVATE_KEY));
+            $usuarioNovo = $this->usuarioRepository->create($usuario);
+            
+            return $usuarioNovo;
+        } catch (Exception $ex){
+            throw $ex;
+        }
     }
 
-    public function read($filtros)
+    public function read($filtros = [])
     {
-        $sql = 'SELECT * FROM usuario WHERE 1 = 1';
-
-        if(isset($filtros) && !empty($filtros["email"])){
-            $sql .= ' AND email = "' . $filtros["email"] . '"';
-        }
-
-        if(isset($filtros) && !empty($filtros["senha"])){
-            $sql .= ' AND senha = "' . $this->encryption($filtros["senha"], PRIVATE_KEY) . '"';
-        }
-
-        if(isset($filtros) && !empty($filtros["token"])){
-            $sql .= ' AND token = "' . $filtros["token"] . '"';
-        }
-
-        $sql .=  ' ORDER BY nome ASC';
-        $dt = $this->pdo->executeQuery($sql);
-        $lista = [];
-
-        foreach ($dt as $dr)
-            $lista[] =  $this->collection($dr);
+        $lista = $this->usuarioRepository->read($filtros);
 
         return $lista;
     }
 
-    public function update($id, $usuario):bool
-    {   
-        $sql  = 'UPDATE usuario SET nome = :nome, sobrenome = :sobrenome, email = :email, token = :token, foto = :foto  WHERE id = :id';
-        $params = [
-            ':id' => $id,
-            ':nome' => $usuario->getNome(),
-            ':sobrenome' => $usuario->getSobrenome(),
-            ':email' => $usuario->getEmail(),
-            ':token' => $usuario->getToken(),
-            ':foto' => $usuario->getFoto()
-        ];
-
-        return $this->pdo->executeNonQuery($sql, $params);
+    public function update($usuario): bool
+    {
+        return $this->usuarioRepository->executeNonQuery($usuario);
     }
 
     public function view($id)
     {
-        $sql = 'SELECT * FROM usuario WHERE id = :id';
-
-        $dr = $this->pdo->executeQueryOneRow($sql, [':id' => $id]);
-
-        return $this->collection($dr);
+        $usuario = $this->usuarioRepository->view($id);
+        return $usuario;
     }
 
-    public function delete($id):bool
+    public function delete($id): bool
     {
-        $sql = 'DELETE FROM usuario WHERE id = :id';
+        $sucesso = $this->usuarioRepository->delete($id);
+        return $sucesso;
+    }
 
-        return $this->pdo->executeNonQuery($sql, [':id' => $id]);
+    public function resetPassword($id, $senha): bool
+    {
+        $sucesso = $this->usuarioRepository->resetPassword($id, $senha);
+        return $sucesso;
+    }
+
+    private function isValid($usuario)
+    {
+        if(strlen($usuario->getNome()) < 3){
+            throw new Exception("Nome deve conter pelo menos 3 carateres.");
+        }
+
+        if(strlen($usuario->getSenha()) < 4){
+            throw new Exception("Senha deve possuir no mínimo 4 caracteres.");
+        }
     }    
 
-    public function resetPassword($id, $senha):bool
-    {   
-        $sql  = 'UPDATE usuario SET senha = :senha WHERE id = :id';
-        $params = [
-            ':id' => $id,
-            ':senha' =>  $this->encryption($senha, PRIVATE_KEY)
-        ];
+    private function usuarioExiste($usuario){
+        $filtros["email"] = $usuario->getEmail();
+        $retorno = $this->usuarioRepository->read($filtros);
 
-        return $this->pdo->executeNonQuery($sql, $params);
-    }
+        $existe = count($retorno) > 0;
 
-    private function collection($arr)
-    {
-        return (object) [
-            'id'     => $arr['id'] ?? null,
-            'nome' => $arr['nome'] ?? null,
-            'sobrenome'   => $arr['sobrenome'] ?? null,
-            'email'   => $arr['email'] ?? null,
-            'token'   => $arr['token'] ?? null,
-            'foto'   => $arr['foto'] ?? null
-        ];
+        return $existe;
     }
 }

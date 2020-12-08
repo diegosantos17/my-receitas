@@ -8,6 +8,7 @@
 
 
 {% block body %}
+{% include 'comum/alert.twig.php' %}
 <form method="POST" action="{{BASE}}usuario/update/{{response.data.usuario.id}}"  enctype="multipart/form-data">
     <div class="form-group row">
         <label for="nome" class="col-sm-2 col-form-label">Nome</label>
