@@ -2,7 +2,7 @@
 
 namespace app\core;
 
-class Controller
+abstract class Controller
 {
     protected function load(string $view, $params = [])
     {
@@ -20,12 +20,6 @@ class Controller
         // Caminho onde estão nossos templates
         $twig = new \Twig\Environment((new \Twig\Loader\FilesystemLoader("../app/site/view/")),
             ["debug" => false]
-        );
-
-        $twig->addFunction(
-            new \Twig\TwigFunction('getenv', function ($key) {
-                return getenv($key);
-            })
         );
 
         // Constante que poderá ser usada nas views com {{BASE}}

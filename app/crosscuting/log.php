@@ -12,7 +12,7 @@ class Log
 {
     static function debug(string $texto)
     {
-        if (LOGINFOFLAG) {
+        if (LOGDEBUGFLAG) {
             $logger = new Logger('main');
             $logger->pushHandler(new StreamHandler("../logs/" . "debug-" . date("Y-m-d") . ".log", Logger::DEBUG));
 

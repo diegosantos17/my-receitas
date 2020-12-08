@@ -3,8 +3,8 @@
 namespace app\site\model;
 
 use app\core\Model;
-use app\infrastructure\contracts\models\ModelInterface;
 use app\crosscuting\EncryptionTrait;
+use app\infrastructure\contracts\models\ModelInterface;
 
 class UsuarioModel implements ModelInterface
 {

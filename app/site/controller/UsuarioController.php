@@ -24,23 +24,32 @@ class UsuarioController extends Controller implements ControllerInterface
 
     public function create()
     {
+        // ETAPA 1: Receber informação (CONTROLLER)
         $usuario = new Usuario();
         $message = [];
 
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+            Log::debug("> Criando usuario " . $_POST["nome"] . " " . $_POST["nome"]);
+
             $usuario->setNome($_POST["nome"]);
             $usuario->setSobrenome($_POST["sobrenome"]);
             $usuario->setEmail($_POST["email"]);
             $usuario->setSenha($_POST["senha"]);
             $usuario->setToken($_POST["email"]);
 
+            // ETAPA 2: Delegar gravação no banco para MODEL
             $usuario = $this->usuarioModel->create($usuario);
+
             $message = [
                 "success" => $usuario ?? false,
                 "description" => "Usuário salvo com sucesso"
             ];
+
+            Log::debug("< Criando usuario " . $_POST["nome"] . " " . $_POST["email"] . " SUCESSO");
         }
 
+        // ETAPA 3: Delegar reenderização do HTML para VIEW
         $this->load("usuario/create", [
             'response' =>
             [

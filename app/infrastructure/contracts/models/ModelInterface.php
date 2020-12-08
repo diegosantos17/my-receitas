@@ -1,8 +1,6 @@
 <?php
 namespace app\infrastructure\contracts\models;
 
-use app\infrastructure\contracts\entities\EntityBase;
-
 interface ModelInterface {
     public function create($model);
     public function read($filtros);
