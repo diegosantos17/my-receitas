@@ -1,11 +1,11 @@
 <?php
 namespace app\infrastructure\repositories;
 
+use app\crosscuting\Email;
 use PDO;
 use PDOException;
 
 use app\crosscuting\Log;
-use app\infrastructure\contracts\repositories\RepositoryInterface;
 
 /**
  * PDO PHP Persistence Class
@@ -46,6 +46,11 @@ abstract class RepositoryBase {
         } catch (PDOException $ex) {
             if ($this->debug) {
                 Log::error("Error on getConnection():" . $ex->getMessage());
+                Email::enviarEmailErro(
+                    EMAIL_TI, 
+                    RESPONSAVEL_TI, 
+                    $ex->getMessage()
+                );
             }
             die();
             return null;

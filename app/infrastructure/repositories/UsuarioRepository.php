@@ -173,6 +173,7 @@ class UsuarioRepository extends RepositoryBase implements RepositoryInterface
             $usuario->setSobrenome($arr['sobrenome']);
             $usuario->setEmail($arr['email']);
             $usuario->setFoto($arr['foto']);
+            $usuario->setToken($arr['token']);
 
             return $usuario;
         } catch (Exception $ex) {
