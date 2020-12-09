@@ -15,7 +15,7 @@ define("PRIVATE_KEY", "trainingPooSecret");
 
 define("EMAIL_SMTP", "smtp.gmail.com");
 define("EMAIL_USERNAME", "diegosr.trainning@gmail.com");
-define("EMAIL_SENHA", "Trainning#40");
+define("EMAIL_SENHA", "SENHA");
 define("EMAIL_FROM", "diegosr.trainning@gmail.com");
 define("EMAIL_FROM_NAME", "Loja de Receitas");
 define("EMAIL_PORT", 587);
